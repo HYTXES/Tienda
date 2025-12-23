@@ -17,42 +17,74 @@ public class PanelUsuarios extends JPanel {
     private UsuarioDAO dao = new UsuarioDAO();
 
     public PanelUsuarios() {
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Formulario
-        JPanel panelForm = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        txtUser = new JTextField(10);
-        txtPass = new JPasswordField(10);
+        // --- PANEL DE FORMULARIO (Estilizado) ---
+        JPanel panelForm = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        panelForm.setBackground(Color.WHITE);
+        panelForm.setBorder(BorderFactory.createTitledBorder("Registro de Usuarios"));
+
+        txtUser = new JTextField(12);
+        txtPass = new JPasswordField(12);
         cbRol = new JComboBox<>(new String[]{"Administrador", "Empleado"});
-        btnGuardar = new JButton("Registrar");
+        
+        btnGuardar = new JButton("REGISTRAR");
+        btnGuardar.setBackground(new Color(0, 150, 136));
+        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.setFocusPainted(false);
+        btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 12));
 
-        panelForm.add(new JLabel("Usuario:")); panelForm.add(txtUser);
-        panelForm.add(new JLabel("Clave:")); panelForm.add(txtPass);
-        panelForm.add(new JLabel("Rol:")); panelForm.add(cbRol);
+        panelForm.add(new JLabel("Usuario:")); 
+        panelForm.add(txtUser);
+        panelForm.add(new JLabel("Clave:")); 
+        panelForm.add(txtPass);
+        panelForm.add(new JLabel("Rol:")); 
+        panelForm.add(cbRol);
         panelForm.add(btnGuardar);
 
-        // Tabla
-        modelo = new DefaultTableModel(new Object[]{"ID", "Usuario", "Rol"}, 0);
+        // --- TABLA ---
+        modelo = new DefaultTableModel(new Object[]{"ID", "Usuario", "Rol"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
         tabla = new JTable(modelo);
-        
-        // Botón Eliminar (Panel Sur)
-        btnEliminar = new JButton("Eliminar Usuario Seleccionado");
-        btnEliminar.setBackground(new Color(231, 76, 60));
+        tabla.setRowHeight(25);
+        JScrollPane scroll = new JScrollPane(tabla);
+        scroll.getViewport().setBackground(Color.WHITE);
+
+        // --- BOTÓN ELIMINAR ---
+        btnEliminar = new JButton("ELIMINAR SELECCIONADO");
+        btnEliminar.setBackground(new Color(192, 57, 43));
         btnEliminar.setForeground(Color.WHITE);
+        btnEliminar.setFocusPainted(false);
+        
         JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelSur.setBackground(Color.WHITE);
         panelSur.add(btnEliminar);
 
         add(panelForm, BorderLayout.NORTH);
-        add(new JScrollPane(tabla), BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
         add(panelSur, BorderLayout.SOUTH);
 
-        // Eventos
+        // --- EVENTOS ---
         btnGuardar.addActionListener(e -> {
-            if(txtUser.getText().isEmpty()) return;
-            Usuario u = new Usuario(0, txtUser.getText(), new String(txtPass.getPassword()), cbRol.getSelectedItem().toString());
+            String user = txtUser.getText().trim();
+            String pass = new String(txtPass.getPassword()).trim();
+            
+            if(user.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Complete todos los campos");
+                return;
+            }
+
+            // CORRECCIÓN: Usamos el constructor de Usuario ajustado
+            Usuario u = new Usuario(0, user, pass, cbRol.getSelectedItem().toString());
+            
             if(dao.registrar(u)) {
                 JOptionPane.showMessageDialog(this, "Usuario Creado");
-                txtUser.setText(""); txtPass.setText("");
+                txtUser.setText(""); 
+                txtPass.setText("");
                 cargarDatos();
             }
         });
@@ -63,15 +95,17 @@ public class PanelUsuarios extends JPanel {
                 JOptionPane.showMessageDialog(this, "Seleccione un usuario de la tabla");
                 return;
             }
-            int id = (int) tabla.getValueAt(fila, 0);
+            
+            // CORRECCIÓN: Convertir ID de forma segura
+            int id = Integer.parseInt(tabla.getValueAt(fila, 0).toString());
             String nombre = tabla.getValueAt(fila, 1).toString();
 
-            if (nombre.equals("admin")) {
-                JOptionPane.showMessageDialog(this, "No se puede eliminar al admin principal");
+            if (nombre.equalsIgnoreCase("admin")) {
+                JOptionPane.showMessageDialog(this, "No se puede eliminar al admin principal por seguridad");
                 return;
             }
 
-            int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar a " + nombre + "?");
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar a " + nombre + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 if (dao.eliminar(id)) {
                     cargarDatos();
@@ -86,7 +120,12 @@ public class PanelUsuarios extends JPanel {
         modelo.setRowCount(0);
         List<Usuario> lista = dao.listar();
         for (Usuario u : lista) {
-            modelo.addRow(new Object[]{u.getId(), u.getNombre(), u.getRol()});
+            // CORRECCIÓN: Nombres de métodos según la clase Usuario corregida
+            modelo.addRow(new Object[]{
+                u.getIdUsuario(), 
+                u.getNombreUsuario(), 
+                u.getRol()
+            });
         }
     }
 }

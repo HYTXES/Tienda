@@ -22,11 +22,14 @@ public class ProveedorDAO {
     }
     
     public boolean eliminar(int id) {
-        String sql = "DELETE FROM proveedores WHERE id_provider = ?"; // Asegúrate de que el nombre sea id_provider o id_proveedor según tu tabla
-        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+    // Asegúrate de que el nombre de la columna sea id_proveedor
+        String sql = "DELETE FROM proveedores WHERE id_proveedor = ?";
+        try (Connection con = Conexion.conectar(); 
+            PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.err.println("Error al eliminar: " + e.getMessage());
             return false;
         }
     }

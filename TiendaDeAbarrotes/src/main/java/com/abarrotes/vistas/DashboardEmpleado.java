@@ -22,9 +22,9 @@ public class DashboardEmpleado extends JFrame {
         lblRol.setForeground(Color.WHITE);
         lblRol.setFont(new Font("SansSerif", Font.BOLD, 18));
 
-        JButton btnVentas = crearBotonMenu("Nueva Venta (F1)");
-        JButton btnConsultar = crearBotonMenu("Ver Precio");
-        JButton btnCerrar = crearBotonMenu("Cerrar Sesión");
+        JButton btnVentas = crearBotonMenu("Nueva Venta   🛒");
+        JButton btnConsultar = crearBotonMenu("Ver Precio   🔍");
+        JButton btnCerrar = crearBotonMenu("Cerrar Sesión   🚪");
 
         menu.add(lblRol);
         menu.add(btnVentas);

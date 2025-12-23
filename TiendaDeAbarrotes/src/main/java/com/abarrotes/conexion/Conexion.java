@@ -58,6 +58,7 @@ public class Conexion {
             "pago_con REAL NOT NULL, " +
             "cambio REAL NOT NULL, " +
             "id_usuario INTEGER, " +
+            "fecha DATETIME DEFAULT CURRENT_TIMESTAMP, " +
             "FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario));",
 
             "CREATE TABLE IF NOT EXISTS detalle_ventas (" +

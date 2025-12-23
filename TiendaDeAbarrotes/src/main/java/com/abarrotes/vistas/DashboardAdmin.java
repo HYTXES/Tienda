@@ -23,25 +23,21 @@ public class DashboardAdmin extends JFrame {
         menu.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5)); // Botones uno tras otro
 
         // Logo o Título en el menú
-        JLabel lblLogo = new JLabel("ABARROTES PRO");
+        JLabel lblLogo = new JLabel("ADMINISTRADOR");
         lblLogo.setForeground(Color.WHITE);
         lblLogo.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblLogo.setBorder(BorderFactory.createEmptyBorder(20, 0, 30, 0));
         menu.add(lblLogo);
 
         // Creación de botones con estilo plano
-        JButton btnVentas = crearBotonMenu("NUEVA VENTA");
-        JButton btnProds = crearBotonMenu("INVENTARIO");
-        JButton btnProv = crearBotonMenu("PROVEEDORES");
-        JButton btnUsers = crearBotonMenu("USUARIOS");
-        JButton btnReportes = crearBotonMenu("REPORTE DIARIO");
-        
-        // Botón especial para Ganancias (Color diferente)
-        JButton btnGanancias = crearBotonMenu("GANANCIAS");
-        btnGanancias.setBackground(new Color(192, 57, 43)); // Rojo elegante
+        JButton btnVentas = crearBotonMenu("NUEVA VENTA   ➕");
+        JButton btnProds = crearBotonMenu("INVENTARIO   📦");
+        JButton btnProv = crearBotonMenu("PROVEEDORES   🚚");
+        JButton btnUsers = crearBotonMenu("USUARIOS   👥");
+        JButton btnReportes = crearBotonMenu("REPORTE DIARIO   📃");
+        JButton btnGanancias = crearBotonMenu("GANANCIAS   💰");
 
-        JButton btnSalir = crearBotonMenu("CERRAR SESIÓN");
-        btnSalir.setBackground(new Color(84, 110, 122));
+        JButton btnSalir = crearBotonMenu("CERRAR SESIÓN   🚪");
 
         // Agregar botones al panel
         menu.add(btnVentas);
@@ -65,6 +61,7 @@ public class DashboardAdmin extends JFrame {
         btnProds.addActionListener(e -> mostrarPanel(new PanelProductos()));
         btnProv.addActionListener(e -> mostrarPanel(new PanelProveedores()));
         btnUsers.addActionListener(e -> mostrarPanel(new PanelUsuarios()));
+        btnReportes.addActionListener(e -> mostrarPanel(new PanelReportes()));
         
         btnSalir.addActionListener(e -> {
             new Login().setVisible(true);

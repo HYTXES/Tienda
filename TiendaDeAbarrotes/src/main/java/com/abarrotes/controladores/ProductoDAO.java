@@ -24,6 +24,19 @@ public class ProductoDAO {
         }
     }
     
+    public boolean actualizarPrecios(String codigo, double pCompra, double pVenta) {
+        String sql = "UPDATE productos SET precio_compra = ?, precio_venta = ? WHERE codigo_barras = ?";
+        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDouble(1, pCompra);
+            ps.setDouble(2, pVenta);
+            ps.setString(3, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar precios: " + e.getMessage());
+            return false;
+        }
+    }
+    
     public boolean eliminar(String codigo) {
         String sql = "DELETE FROM productos WHERE codigo_barras = ?";
         try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -74,4 +87,18 @@ public class ProductoDAO {
         }
         return p;
     }
+    
+    public boolean agregarStock(String codigo, double cantidad) {
+    String sql = "UPDATE productos SET cantidad_stock = cantidad_stock + ? WHERE codigo_barras = ?";
+    try (Connection con = Conexion.conectar(); 
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setDouble(1, cantidad);
+        ps.setString(2, codigo);
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        System.err.println("Error al subir stock: " + e.getMessage());
+        return false;
+    }
+}
+    
 }

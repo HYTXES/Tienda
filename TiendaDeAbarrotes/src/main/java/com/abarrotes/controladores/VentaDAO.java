@@ -2,6 +2,8 @@ package com.abarrotes.controladores;
 
 import com.abarrotes.conexion.Conexion;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VentaDAO {
     
@@ -42,5 +44,38 @@ public class VentaDAO {
                 psUpdate.execute();
             }
         } catch (SQLException e) { System.err.println(e.getMessage()); }
+    }
+    
+    public List<Object[]> obtenerReporteDiario(String filtroUsuario) {
+        List<Object[]> lista = new ArrayList<>();
+        // Usamos LIKE para el filtro de nombre de usuario
+        String sql = "SELECT v.id_venta, p.nombre AS producto, dv.cantidad, dv.precio_venta_momento, " +
+                     "(dv.precio_venta_momento - p.precio_compra) * dv.cantidad AS ganancia_neta, " +
+                     "u.nombre_usuario AS cajero " +
+                     "FROM detalle_ventas dv " +
+                     "JOIN ventas v ON dv.id_venta = v.id_venta " +
+                     "JOIN productos p ON dv.codigo_barras = p.codigo_barras " +
+                     "JOIN usuarios u ON v.id_usuario = u.id_usuario " + // Join con usuarios
+                     "WHERE date(v.fecha) = date('now', 'localtime') " +
+                     "AND u.nombre_usuario LIKE ?"; 
+
+        try (Connection con = Conexion.conectar(); 
+             PreparedStatement ps = con.prepareStatement(sql)) {
+        
+            ps.setString(1, "%" + filtroUsuario + "%");
+            ResultSet rs = ps.executeQuery();
+        
+            while (rs.next()) {
+                lista.add(new Object[]{
+                    rs.getInt("id_venta"),
+                    rs.getString("producto"),
+                    rs.getDouble("cantidad"),
+                    rs.getDouble("precio_venta_momento"),
+                    rs.getDouble("ganancia_neta"),
+                    rs.getString("cajero") // <--- Nueva columna
+                });
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return lista;
     }
 }
